@@ -16,10 +16,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import ca.qc.cgodin.ecommnerceapp.R
 
 @Composable
-fun WelcomeScreen() {
+fun WelcomeScreen(navController: NavHostController) {
     val blueColor = Color(0xFF1E5FAA) // Définition d'une couleur bleue personnalisée
 
     // Utilisation de Box pour occuper tout l'écran avec un fond noir
@@ -82,7 +83,7 @@ fun WelcomeScreen() {
                     ) {
                         // Bouton Connexion
                         Button(
-                            onClick = { /* TODO: Naviguer vers Connexion */ },
+                            onClick = {navController.navigate("login_screen")},
                             colors = ButtonDefaults.buttonColors(containerColor = Color.Black), // Fond noir
                             modifier = Modifier
                                 .width(170.dp) // Chaque bouton prend une part égale
@@ -96,7 +97,7 @@ fun WelcomeScreen() {
 
                         // Bouton Inscription
                         Button(
-                            onClick = { /* TODO: Naviguer vers Inscription */ },
+                            onClick = { navController.navigate("signup_screen") },
                             colors = ButtonDefaults.buttonColors(containerColor = Color.White), // Fond blanc
                             modifier = Modifier
                                 .width(170.dp) // Chaque bouton prend une part égale
