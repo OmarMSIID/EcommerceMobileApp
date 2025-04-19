@@ -1,31 +1,42 @@
 package ca.qc.cgodin.ecommnerceapp.ui.theme
 
-import androidx.navigation.NavController
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.material3.Icon
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.sp
+import androidx.compose.material3.TextFieldDefaults
+import androidx.navigation.NavController
+
 
 @Composable
 fun SignupScreen(navController: NavController) {
@@ -34,86 +45,195 @@ fun SignupScreen(navController: NavController) {
     var confirmPassword by remember { mutableStateOf("") }
     var address by remember { mutableStateOf("") }
 
-    Column(
+    val blueColor = Color(0xFF1E5FAA) // Définition d'une couleur bleue personnalisée
+    val textFieldGray = Color(0xFF7F7F7F)
+    Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+            .background(Color.Black)
     ) {
-        Text(
-            text = "Créer un compte",
-            style = MaterialTheme.typography.headlineMedium,
-            modifier = Modifier.padding(bottom = 16.dp)
-        )
-
-        Text(
-            text = "Rejoignez-nous et commencez votre shopping dès maintenant !",
-            style = MaterialTheme.typography.bodyMedium,
-            modifier = Modifier.padding(bottom = 24.dp)
-        )
-
-        // Email field
-        OutlinedTextField(
-            value = email,
-            onValueChange = { email = it },
-            label = { Text("E-mail") },
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 8.dp),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
-        )
-
-        // Password field
-        OutlinedTextField(
-            value = password,
-            onValueChange = { password = it },
-            label = { Text("Mot de passe") },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 8.dp),
-            visualTransformation = PasswordVisualTransformation(),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
-        )
-
-        // Confirm password field
-        OutlinedTextField(
-            value = confirmPassword,
-            onValueChange = { confirmPassword = it },
-            label = { Text("Confirmer le mot de passe") },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 8.dp),
-            visualTransformation = PasswordVisualTransformation(),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
-        )
-
-        // Address field
-        OutlinedTextField(
-            value = address,
-            onValueChange = { address = it },
-            label = { Text("Adresse") },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 16.dp)
-        )
-
-        // Signup button
-        Button(
-            onClick = {
-                //TODO:SAVE THE USER
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(50.dp)
+                .fillMaxSize()
+                .background(blueColor)
         ) {
-            Text("S'inscrire")
-        }
+            // Barre du haut
+            Spacer(modifier = Modifier.height(40.dp))
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.ArrowBack,
+                    contentDescription = "Back",
+                    modifier = Modifier
+                        .size(28.dp)
+                        .clickable { navController.navigate("Bienvenue") },
+                    tint = Color.White
+                )
+                Text(
+                    text = "Connexion",
+                    color = Color.White,
+                    fontWeight = FontWeight.Bold
+                )
+            }
 
-        Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(21.dp))
 
-        TextButton(onClick = {navController.navigate("login_screen")}) {
-            Text("Déjà un compte? Connectez-vous")
+            // Titre et sous-titre
+            Text(
+                text = "Créer un compte",
+                color = Color.White,
+                fontSize = 28.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(start = 16.dp)
+            )
+            Spacer(modifier = Modifier.height(15.dp))
+            Text(
+                text = "Rejoignez-nous et commencez votre shopping dès maintenant !",
+                color = Color.White,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(start = 16.dp, end = 16.dp)
+            )
+
+            Spacer(modifier = Modifier.height(55.dp))
+
+            // Partie blanche en bas
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight()
+                    .background(Color.White, shape = RoundedCornerShape(topStart = 40.dp, topEnd = 40.dp))
+                    .padding(24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Spacer(modifier = Modifier.height(20.dp))
+                var emailError by remember { mutableStateOf(false) }
+
+                // Champ email
+                OutlinedTextField(
+                    value = email,
+                    onValueChange = {
+                        email = it
+                        emailError = !android.util.Patterns.EMAIL_ADDRESS.matcher(it).matches()
+                    },
+                    isError = emailError,
+                    label = {
+                        Text(
+                            text = "E-mail",
+                            fontSize = 15.sp,
+                            fontWeight = FontWeight.SemiBold,
+                        )
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 16.dp),
+                    shape = RoundedCornerShape(50),
+                    colors = TextFieldDefaults.colors(
+                        unfocusedContainerColor = textFieldGray,
+                        unfocusedLabelColor = Color.Black,
+                        unfocusedTextColor = Color.Black,
+                        focusedContainerColor = textFieldGray,
+                        focusedTextColor = Color.Black,
+                    ),
+                    singleLine = true
+                )
+                // Affichage d’un message d’erreur
+                if (emailError) {
+                    Text(
+                        text = "Adresse e-mail invalide",
+                        color = Color.Red,
+                        fontSize = 12.sp,
+                        modifier = Modifier.padding(start = 16.dp, bottom = 8.dp)
+                    )
+                }
+
+
+                // Champ mot de passe
+                OutlinedTextField(
+                    value = password,
+                    onValueChange = { password = it },
+                    label = { Text(text = "Mot de passe",
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.SemiBold,) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 8.dp),
+                    shape = RoundedCornerShape(50),
+                    colors = TextFieldDefaults.colors(
+                        unfocusedContainerColor = textFieldGray,
+                        unfocusedLabelColor = Color.Black,
+                        unfocusedTextColor = Color.Black,
+                        focusedContainerColor = textFieldGray,
+                        focusedTextColor = Color.Black,
+                    ),
+                    visualTransformation = PasswordVisualTransformation(),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+
+                    )
+
+                OutlinedTextField(
+                    value = confirmPassword,
+                    onValueChange = { confirmPassword = it },
+                    label = { Text(text = "Confirmer le mot de passe",
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.SemiBold,) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 8.dp),
+                    shape = RoundedCornerShape(50),
+                    colors = TextFieldDefaults.colors(
+                        unfocusedContainerColor = textFieldGray,
+                        unfocusedLabelColor = Color.Black,
+                        unfocusedTextColor = Color.Black,
+                        focusedContainerColor = textFieldGray,
+                        focusedTextColor = Color.Black,
+                    ),
+                    visualTransformation = PasswordVisualTransformation(),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+
+                    )
+
+                OutlinedTextField(
+                    value = address,
+                    onValueChange = { address = it },
+                    label = { Text(text = "Adresse",
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.SemiBold,
+                    ) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 16.dp),
+                    shape = RoundedCornerShape(50),
+                    colors = TextFieldDefaults.colors(
+                        unfocusedContainerColor = textFieldGray,
+                        unfocusedLabelColor = Color.Black,
+                        unfocusedTextColor = Color.Black,
+                        focusedContainerColor = textFieldGray,
+                        focusedTextColor = Color.Black,
+                    )
+                )
+
+                Spacer(modifier = Modifier.height(70.dp))
+
+                // Bouton Connexion
+                Button(
+                    onClick = { /* Todo */ },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(53.dp),
+                    shape = RoundedCornerShape(50),
+                    colors = androidx.compose.material3.ButtonDefaults.buttonColors(
+                        containerColor = blueColor
+                    )
+                ) {
+                    Text("S’inscrire", color = Color.White)
+                }
+            }
         }
     }
 }
