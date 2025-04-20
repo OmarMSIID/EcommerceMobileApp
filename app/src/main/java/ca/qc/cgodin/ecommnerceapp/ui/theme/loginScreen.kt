@@ -76,13 +76,17 @@ fun LoginScreen(navController: NavHostController) {
                     contentDescription = "Back",
                     modifier = Modifier
                         .size(28.dp)
-                        .clickable { navController.navigate("Bienvenue") },
-                    tint = Color.White
+                        .clickable { navController.navigate("welcome_screen") },
+                    tint = Color.White,
+
                 )
                 Text(
                     text = "S’inscrire",
                     color = Color.White,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.clickable{
+                        navController.navigate("signup_screen")
+                    }
                 )
             }
 

@@ -71,7 +71,7 @@ fun SignupScreen(navController: NavController) {
                     contentDescription = "Back",
                     modifier = Modifier
                         .size(28.dp)
-                        .clickable { navController.navigate("Bienvenue") },
+                        .clickable { navController.navigate("welcome_screen") },
                     tint = Color.White
                 )
                 Text(
