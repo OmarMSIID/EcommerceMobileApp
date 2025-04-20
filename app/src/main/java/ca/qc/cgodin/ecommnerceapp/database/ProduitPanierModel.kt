@@ -1,4 +1,10 @@
 package ca.qc.cgodin.ecommnerceapp.database
 
-class ProduitPanierModel {
+import androidx.room.Database
+import androidx.room.RoomDatabase
+
+
+@Database(entities = [ProduitPanier::class], version = 1)
+abstract class ProduitPanierModel: RoomDatabase() {
+    abstract val produitDao: ProduitPanierDao
 }
