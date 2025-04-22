@@ -31,14 +31,14 @@ fun Banner() {
             "50% de réduction\nsur votre 1ère commande"
         ),
         BannerData(
-            R.drawable.s21,
+            R.drawable.web_banner_design,
             "Offre d'été",
             "Jusqu'à 70% sur les accessoires"
         ),
         BannerData(
             R.drawable.headphones,
             "Promo spéciale",
-            "Livraison gratuite dès 30€ d'achat"
+            "Livraison gratuite dès 300DH d'achat"
         )
     )
 

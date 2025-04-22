@@ -14,6 +14,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -25,16 +26,16 @@ import ca.qc.cgodin.ecommnerceapp.data.Product
 @Composable
 fun ProductGrid() {
     val products = listOf(
-        Product("1", "Casque stereo P47", "Audio", 140.0, R.drawable.headphones),
-        Product("2", "Galaxy watch 7", "Montres", 450.0, R.drawable.watch),
-        Product("3", "Samsung Galaxy S21", "Téléphones", 2549.0, R.drawable.s21),
-        Product("4", "Clavier sans fil", "Accessoires", 350.0, R.drawable.keyboard)
+        Product("1", "Casque stereo P47", "Casques", 140.0, R.drawable.headphones),
+        Product("2", "Galaxy watch 7", "Accessoires", 450.0, R.drawable.watch),
+        Product("3", "Samsung galaxy s21", "Smartphones", 2549.0, R.drawable.s21),
+        Product("4", "Wireless keyboard", "Accessoires", 350.0, R.drawable.keyboard)
     )
 
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
-        verticalArrangement = Arrangement.spacedBy(12.dp),
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
         modifier = Modifier
             .fillMaxHeight()
             .padding(8.dp)
@@ -43,36 +44,56 @@ fun ProductGrid() {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(8.dp)
+                    .padding(4.dp)
             ) {
                 Image(
                     painter = painterResource(id = product.imageRes),
                     contentDescription = product.name,
                     modifier = Modifier
-                        .fillMaxWidth(1f) // Augmenter la largeur un peu
-                        .height(150.dp)
-                        .clip(RoundedCornerShape(15.dp)), // Coins arrondis
+                        .fillMaxWidth()
+                        .height(100.dp)
+                        .clip(RoundedCornerShape(12.dp)),
                     contentScale = ContentScale.Crop
                 )
 
-                Spacer(modifier = Modifier.height(8.dp))
-
-                Text(
-                    text = product.name,
-                    fontWeight = FontWeight.SemiBold,
-                    fontSize = 14.sp,
-                    color = Color.Black,
-                    modifier = Modifier.fillMaxWidth(),
-                    textAlign = TextAlign.Center
-                )
-
-                Text(
-                    text = "MAD ${product.price}",
-                    fontSize = 13.sp,
-                    color = Color.Gray,
-                    modifier = Modifier.fillMaxWidth(),
-                    textAlign = TextAlign.Center
-                )
+                Column(
+                    modifier = Modifier.padding(top = 4.dp),
+                    verticalArrangement = Arrangement.spacedBy(4.2.dp) // Espacement réduit entre les textes
+                ) {
+                    Text(
+                        text = product.name,
+                        style = TextStyle(
+                            fontWeight = FontWeight.SemiBold,
+                            fontSize = 14.sp,
+                            color = Color.Black,
+                            lineHeight = 16.sp // Hauteur de ligne réduite
+                        ),
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = TextAlign.Start
+                    )
+                    Text(
+                        text = product.category,
+                        style = TextStyle(
+                            fontWeight = FontWeight.Normal,
+                            fontSize = 12.sp,
+                            color = Color.Gray,
+                            lineHeight = 14.sp // Hauteur de ligne réduite
+                        ),
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = TextAlign.Start
+                    )
+                    Text(
+                        text = "MAD ${product.price}",
+                        style = TextStyle(
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Medium,
+                            color = Color.DarkGray,
+                            lineHeight = 14.sp // Hauteur de ligne réduite
+                        ),
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = TextAlign.Start
+                    )
+                }
             }
         }
     }
