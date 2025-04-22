@@ -35,6 +35,8 @@ import ca.qc.cgodin.ecommnerceapp.ui.theme.SignupScreen
 import kotlinx.coroutines.delay
 import ca.qc.cgodin.ecommnerceapp.ui.theme.TechnoShopTheme
 import ca.qc.cgodin.ecommnerceapp.ui.theme.WelcomeScreen
+import com.google.firebase.Firebase
+import com.google.firebase.auth.auth
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -52,7 +54,9 @@ class MainActivity : ComponentActivity() {
 fun AppNavigator() {
     val navController = rememberNavController()
 
-    NavHost(navController = navController, startDestination = "splash_screen") {
+    val isLogged = Firebase.auth.currentUser!=null
+    val firstPage = if(isLogged) "home_screen" else "splash_screen"
+    NavHost(navController = navController, startDestination = firstPage) {
         composable("splash_screen") {
             SplashScreen(navController)
         }
@@ -63,6 +67,9 @@ fun AppNavigator() {
             LoginScreen(navController)
         }
         composable("signup_screen") {
+            SignupScreen(navController)
+        }
+        composable("home_screen") {
             HomeScreen(navController)
         }
     }

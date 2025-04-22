@@ -44,12 +44,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.AlertDialogDefaults.containerColor
+import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.viewmodel.compose.viewModel
+import ca.qc.cgodin.ecommnerceapp.AppUtil.AppUtil
+import ca.qc.cgodin.ecommnerceapp.auth.AuthModel
 
 
 @Composable
-fun LoginScreen(navController: NavHostController) {
-    var username by remember { mutableStateOf("") }
+fun LoginScreen(navController: NavHostController,authModel: AuthModel= viewModel()) {
+    var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    val context = LocalContext.current
     val blueColor = Color(0xFF1E5FAA) // Définition d'une couleur bleue personnalisée
     val textFieldGray = Color(0xFF7F7F7F)
     Box(
@@ -123,8 +128,8 @@ fun LoginScreen(navController: NavHostController) {
                 Spacer(modifier = Modifier.height(80.dp))
                 // Champ nom d'utilisateur
                 OutlinedTextField(
-                    value = username,
-                    onValueChange = { username = it },
+                    value = email,
+                    onValueChange = { email = it },
                     label = { Text(text = "Nom d'utilisateur",
                         fontSize = 15.sp,
                         fontWeight = FontWeight.SemiBold,
@@ -178,7 +183,20 @@ fun LoginScreen(navController: NavHostController) {
 
                 // Bouton Connexion
                 Button(
-                    onClick = { /* Handle login */ },
+                    onClick = {
+                        authModel.logIn(email,password) {isSuccess,errorMsg->
+                            if(isSuccess){
+                                navController.navigate("home_screen"){
+                                    popUpTo(0){
+                                        inclusive=true
+                                    }
+                                }
+                            }
+                            else{
+                                AppUtil.showToaster(context,errorMsg?:"something goes wrong")
+                            }
+                        }
+                    },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(53.dp),

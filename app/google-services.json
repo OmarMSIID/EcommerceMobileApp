@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "14193401665",
+    "project_id": "msiid-omar-ecommerceapp",
+    "storage_bucket": "msiid-omar-ecommerceapp.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:14193401665:android:af9ebc38ca3683e3b00bc0",
+        "android_client_info": {
+          "package_name": "ca.qc.cgodin.ecommnerceapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAiAvKp37tmoVIoSZgXu0RBVIqTMWB59TE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

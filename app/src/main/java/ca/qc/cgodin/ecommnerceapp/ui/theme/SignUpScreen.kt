@@ -35,15 +35,21 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import ca.qc.cgodin.ecommnerceapp.AppUtil.AppUtil
+import ca.qc.cgodin.ecommnerceapp.auth.AuthModel
 
 
 @Composable
-fun SignupScreen(navController: NavController) {
+fun SignupScreen(navController: NavController, authViewModel: AuthModel = viewModel()) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
     var address by remember { mutableStateOf("") }
+
+    val context= LocalContext.current
 
     val blueColor = Color(0xFF1E5FAA) // Définition d'une couleur bleue personnalisée
     val textFieldGray = Color(0xFF7F7F7F)
@@ -222,7 +228,20 @@ fun SignupScreen(navController: NavController) {
 
                 // Bouton Connexion
                 Button(
-                    onClick = { /* Todo */ },
+                    onClick = {
+                        authViewModel.signUp(email,password,address){isSuccess,errorMsg->
+                            if(isSuccess){
+                                navController.navigate("login_screen"){
+                                    popUpTo(0){
+                                        inclusive=true
+                                    }
+                                }
+                            }
+                            else{
+                                AppUtil.showToaster(context,errorMsg?:"something goes wrong")
+                            }
+                        }
+                    },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(53.dp),

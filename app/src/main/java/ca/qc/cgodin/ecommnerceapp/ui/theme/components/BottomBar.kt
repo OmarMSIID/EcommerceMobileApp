@@ -10,6 +10,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import ca.qc.cgodin.ecommnerceapp.R
+import com.google.firebase.Firebase
+import com.google.firebase.auth.auth
 
 @Composable
 fun BottomBar() {
@@ -30,7 +32,9 @@ fun BottomBar() {
         )
         NavigationBarItem(
             selected = false,
-            onClick = { /* profil */ },
+            onClick = {
+                Firebase.auth.signOut()
+            },
             icon = { Icon(painterResource(R.drawable.ic_profile), contentDescription = "Profil") }
         )
     }
