@@ -29,6 +29,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import ca.qc.cgodin.ecommnerceapp.ui.theme.HomeScreen
 import ca.qc.cgodin.ecommnerceapp.ui.theme.LoginScreen
 import ca.qc.cgodin.ecommnerceapp.ui.theme.SignupScreen
 import kotlinx.coroutines.delay
@@ -62,7 +63,7 @@ fun AppNavigator() {
             LoginScreen(navController)
         }
         composable("signup_screen") {
-            SignupScreen(navController)
+            HomeScreen(navController)
         }
     }
 }
