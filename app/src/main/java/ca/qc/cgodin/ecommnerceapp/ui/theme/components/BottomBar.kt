@@ -14,9 +14,9 @@ import ca.qc.cgodin.ecommnerceapp.R
 @Composable
 fun BottomBar() {
     NavigationBar(
-        containerColor = Color.White,
+        containerColor = Color(0xB0D9D9D9),
         tonalElevation = 4.dp,
-        modifier = Modifier.height(100.dp) // Réduire la hauteur de la barre
+        modifier = Modifier.height(80.dp), // Réduire la hauteur de la barre
     ) {
         NavigationBarItem(
             selected = false,

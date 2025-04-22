@@ -120,8 +120,6 @@ fun Banner() {
                         )
                     }
                 }
-
-                // ❌ Plus de miniature ici
             }
         }
     }
