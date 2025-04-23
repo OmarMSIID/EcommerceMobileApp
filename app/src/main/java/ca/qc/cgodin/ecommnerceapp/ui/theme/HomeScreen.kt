@@ -56,8 +56,8 @@ fun HomeScreen(navController: NavHostController) {
                 modifier = Modifier.padding(bottom = 8.dp) // Espacement sous le titre
             )
 
-            // Affichage des produits
-            ProductGrid()
+            // Affichage des produits - Passage du NavController
+            ProductGrid(navController)
         }
     }
 }

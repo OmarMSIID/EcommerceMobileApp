@@ -8,35 +8,28 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import ca.qc.cgodin.ecommnerceapp.ui.theme.HomeScreen
-import ca.qc.cgodin.ecommnerceapp.ui.theme.LoginScreen
-import ca.qc.cgodin.ecommnerceapp.ui.theme.SignupScreen
-import kotlinx.coroutines.delay
-import ca.qc.cgodin.ecommnerceapp.ui.theme.TechnoShopTheme
-import ca.qc.cgodin.ecommnerceapp.ui.theme.WelcomeScreen
+import androidx.navigation.navArgument
+import ca.qc.cgodin.ecommnerceapp.data.ProductRepository
+import ca.qc.cgodin.ecommnerceapp.navigation.Screen
+import ca.qc.cgodin.ecommnerceapp.ui.theme.*
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
+import kotlinx.coroutines.delay
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -53,35 +46,45 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun AppNavigator() {
     val navController = rememberNavController()
+    val isLogged = Firebase.auth.currentUser != null
+    val firstPage = if (isLogged) Screen.Home.route else "splash_screen"
 
-    val isLogged = Firebase.auth.currentUser!=null
-    val firstPage = if(isLogged) "home_screen" else "splash_screen"
-    NavHost(navController = navController, startDestination = firstPage) {
+    NavHost(
+        navController = navController,
+        startDestination = firstPage
+    ) {
         composable("splash_screen") {
             SplashScreen(navController)
         }
         composable("welcome_screen") {
             WelcomeScreen(navController)
         }
-        composable("login_screen"){
+        composable("login_screen") {
             LoginScreen(navController)
         }
         composable("signup_screen") {
             SignupScreen(navController)
         }
-        composable("home_screen") {
+        composable(Screen.Home.route) {
             HomeScreen(navController)
+        }
+        composable(
+            route = Screen.ProductDescription.route,
+            arguments = listOf(navArgument("productId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val productId = backStackEntry.arguments?.getString("productId")
+            val product = ProductRepository.getProductById(productId)
+            if (product != null) {
+                ProductDescriptionScreen(navController, product)
+            }
         }
     }
 }
-
-
 
 @Composable
 fun SplashScreen(navController: NavHostController) {
     val blueColor = Color(0xFF1E5FAA)
 
-    // Splash screen content
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -108,25 +111,21 @@ fun SplashScreen(navController: NavHostController) {
         )
 
         // Logo au centre
-        TechnoShopLogo(modifier = Modifier.align(Alignment.Center))
+        Image(
+            painter = painterResource(id = R.drawable.logo),
+            contentDescription = "TechnoShop Logo",
+            modifier = Modifier
+                .size(375.dp)
+                .align(Alignment.Center)
+        )
     }
 
-    // Delay for 1 second, then navigate to the Welcome Screen
     LaunchedEffect(Unit) {
-        delay(1000) // 1 second delay
+        delay(1000)
         navController.navigate("welcome_screen") {
             popUpTo("splash_screen") { inclusive = true }
         }
     }
-}
-
-@Composable
-fun TechnoShopLogo(modifier: Modifier = Modifier) {
-    Image(
-        painter = painterResource(id = R.drawable.logo), // Assurez-vous d'ajouter "logo.png" dans res/drawable
-        contentDescription = "TechnoShop Logo",
-        modifier = modifier.size(375.dp) // Ajustez la taille de l'image si nécessaire
-    )
 }
 
 @Preview(showBackground = true)

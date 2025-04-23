@@ -8,10 +8,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="PLACEHOLDER" />
-                  <option name="mobileSdkAppId" value="" />
-                  <option name="projectId" value="" />
-                  <option name="projectNumber" value="" />
+                  <option name="appId" value="ca.qc.cgodin.ecommnerceapp" />
+                  <option name="mobileSdkAppId" value="1:14193401665:android:af9ebc38ca3683e3b00bc0" />
+                  <option name="projectId" value="msiid-omar-ecommerceapp" />
+                  <option name="projectNumber" value="14193401665" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />

@@ -83,7 +83,11 @@ fun SignupScreen(navController: NavController, authViewModel: AuthModel = viewMo
                 Text(
                     text = "Connexion",
                     color = Color.White,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier
+                        .clickable {
+                            navController.navigate("login_screen")
+                        }
                 )
             }
 
@@ -256,3 +260,4 @@ fun SignupScreen(navController: NavController, authViewModel: AuthModel = viewMo
         }
     }
 }
+

@@ -2,6 +2,7 @@ package ca.qc.cgodin.ecommnerceapp.ui.theme.components
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -19,18 +20,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import ca.qc.cgodin.ecommnerceapp.R
-import ca.qc.cgodin.ecommnerceapp.data.Product
+import androidx.navigation.NavHostController
+import ca.qc.cgodin.ecommnerceapp.data.ProductRepository
+import ca.qc.cgodin.ecommnerceapp.navigation.Screen
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun ProductGrid() {
-    val products = listOf(
-        Product("1", "Casque stereo P47", "Casques", 140.0, R.drawable.headphones),
-        Product("2", "Galaxy watch 7", "Accessoires", 450.0, R.drawable.watch),
-        Product("3", "Samsung galaxy s21", "Smartphones", 2549.0, R.drawable.s21),
-        Product("4", "Wireless keyboard", "Accessoires", 350.0, R.drawable.keyboard)
-    )
+fun ProductGrid(navController: NavHostController) {
+    val products = ProductRepository.products
 
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
@@ -45,6 +42,10 @@ fun ProductGrid() {
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(4.dp)
+                    .clickable {
+                        ProductRepository.selectProduct(product.id)
+                        navController.navigate(Screen.ProductDescription.createRoute(product.id))
+                    }
             ) {
                 Image(
                     painter = painterResource(id = product.imageRes),
@@ -58,7 +59,7 @@ fun ProductGrid() {
 
                 Column(
                     modifier = Modifier.padding(top = 4.dp),
-                    verticalArrangement = Arrangement.spacedBy(4.2.dp) // Espacement réduit entre les textes
+                    verticalArrangement = Arrangement.spacedBy(4.2.dp)
                 ) {
                     Text(
                         text = product.name,
@@ -66,7 +67,7 @@ fun ProductGrid() {
                             fontWeight = FontWeight.SemiBold,
                             fontSize = 14.sp,
                             color = Color.Black,
-                            lineHeight = 16.sp // Hauteur de ligne réduite
+                            lineHeight = 16.sp
                         ),
                         modifier = Modifier.fillMaxWidth(),
                         textAlign = TextAlign.Start
@@ -77,7 +78,7 @@ fun ProductGrid() {
                             fontWeight = FontWeight.Normal,
                             fontSize = 12.sp,
                             color = Color.Gray,
-                            lineHeight = 14.sp // Hauteur de ligne réduite
+                            lineHeight = 14.sp
                         ),
                         modifier = Modifier.fillMaxWidth(),
                         textAlign = TextAlign.Start
@@ -88,7 +89,7 @@ fun ProductGrid() {
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Medium,
                             color = Color.DarkGray,
-                            lineHeight = 14.sp // Hauteur de ligne réduite
+                            lineHeight = 14.sp
                         ),
                         modifier = Modifier.fillMaxWidth(),
                         textAlign = TextAlign.Start
