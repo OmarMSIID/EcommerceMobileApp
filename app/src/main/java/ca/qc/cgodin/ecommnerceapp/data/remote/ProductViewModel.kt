@@ -16,6 +16,9 @@ class ProductViewModel : ViewModel() {
     private val _selectedCategory = MutableStateFlow<String?>(null)
     val selectedCategory: StateFlow<String?> = _selectedCategory.asStateFlow()
 
+    private val _selectedProduct = MutableStateFlow<Product?>(null)
+    val selectedProduct: StateFlow<Product?> = _selectedProduct.asStateFlow()
+
     init {
         loadProducts()
     }
@@ -47,6 +50,31 @@ class ProductViewModel : ViewModel() {
             currentState.products
         } else {
             currentState.products.filter { it.category == selectedCat }
+        }
+    }
+    fun selectProductById(id: Int) {
+        viewModelScope.launch {
+            val currentState = _uiState.value
+            if (currentState is ProductUiState.Success) {
+                // Products are already loaded, find the product
+                val product = currentState.products.find { it.id == id }
+                _selectedProduct.value = product
+            } else {
+                // Products are not loaded yet, load them first
+                repository.getProducts().fold(
+                    onSuccess = { products ->
+                        // Update the UI state
+                        _uiState.value = ProductUiState.Success(products)
+                        // Now find and set the product
+                        val product = products.find { it.id == id }
+                        _selectedProduct.value = product
+                    },
+                    onFailure = { e ->
+                        _uiState.value = ProductUiState.Error(e.message ?: "Erreur inconnue")
+                        _selectedProduct.value = null
+                    }
+                )
+            }
         }
     }
 }

@@ -19,6 +19,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -45,6 +46,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import ca.qc.cgodin.ecommnerceapp.AppUtil.AppUtil
 import ca.qc.cgodin.ecommnerceapp.data.ProductRepository
+import ca.qc.cgodin.ecommnerceapp.data.remote.ProductUiState
 import ca.qc.cgodin.ecommnerceapp.data.remote.ProductViewModel
 import ca.qc.cgodin.ecommnerceapp.navigation.Screen
 import ca.qc.cgodin.ecommnerceapp.ui.theme.*
@@ -79,9 +81,9 @@ fun AppNavigator() {
         startDestination = firstPage
     ) {
         composable("splash_screen") {
-            //SplashScreen(navController)
+            SplashScreen(navController)
             //ElectroTechStoreApp(onCartClick = {}, onAddProductClick = {})
-            ProductTitleScreen()
+
         }
         composable("welcome_screen") {
             WelcomeScreen(navController)
@@ -93,8 +95,7 @@ fun AppNavigator() {
             SignupScreen(navController)
         }
         composable(Screen.Home.route) {
-            //HomeScreen(navController)
-            ProductTitleScreen()
+            HomeScreen(navController)
             //ElectroTechStoreApp(onAddProductClick = {}, onCartClick = {})
 
         }
@@ -102,10 +103,16 @@ fun AppNavigator() {
             route = Screen.ProductDescription.route,
             arguments = listOf(navArgument("productId") { type = NavType.StringType })
         ) { backStackEntry ->
-            val productId = backStackEntry.arguments?.getString("productId")
-            val product = ProductRepository.getProductById(productId)
-            if (product != null) {
-                ProductDescriptionScreen(navController, product)
+            val productIdString = backStackEntry.arguments?.getString("productId")
+
+            // Safely convert to Int
+            val productId = productIdString?.toIntOrNull()
+
+            if (productId != null) {
+                ProductDescriptionScreen(navController, productId)
+            } else {
+                // Handle invalid productId (e.g., show an error screen or a fallback)
+                Log.e("ProductDescription", "Invalid product ID")
             }
         }
     }
@@ -166,29 +173,48 @@ fun SplashScreenPreview() {
 }
 
 @Composable
-fun ProductTitleScreen(productViewModel: ProductViewModel=viewModel()){
-    var listofProducts = productViewModel.getFilteredProducts()
-    Spacer(modifier = Modifier.size(15.dp))
-    Text("list of product")
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(2),
-        contentPadding = PaddingValues(top = 16.dp),
-        horizontalArrangement = Arrangement.spacedBy(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
+fun ProductTitleScreen(productViewModel: ProductViewModel = viewModel()) {
+    val uiState by productViewModel.uiState.collectAsState()
 
-    ) {
-        items(listofProducts) { product ->
-            Text(
-                text = product.title,
-                color = Color.White,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis
-            )
+    when (uiState) {
+        is ProductUiState.Success -> {
+            val products = (uiState as ProductUiState.Success).products
 
+            Column(modifier = Modifier.padding(16.dp)) {
+                Spacer(modifier = Modifier.size(15.dp))
+                Text("List of Products")
+
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(2),
+                    contentPadding = PaddingValues(top = 16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                ) {
+                    items(products) { product ->
+                        Text(
+                            text = product.title,
+                            color = Color.Black,
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Bold,
+                            maxLines = 2,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
+                }
+            }
+        }
+
+        is ProductUiState.Loading -> {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator()
+            }
+        }
+
+        is ProductUiState.Error -> {
+            Text("Error loading products", color = Color.Red)
         }
     }
-
 }
+
+
 

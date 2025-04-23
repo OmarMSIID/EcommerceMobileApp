@@ -27,10 +27,7 @@ fun SetupNavGraph(navController: NavHostController) {
             arguments = listOf(navArgument("productId") { type = NavType.StringType })
         ) { backStackEntry ->
             val productId = backStackEntry.arguments?.getString("productId")
-            val product = ProductRepository.getProductById(productId)
-            if (product != null) {
-                ProductDescriptionScreen(navController, product)
-            }
+
         }
     }
 }
