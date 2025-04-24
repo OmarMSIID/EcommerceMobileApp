@@ -19,6 +19,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -176,67 +177,115 @@ fun ProductDescriptionScreen(
     }
 }
 
+data class ColorOption(
+    val color: Color,
+    val name: String,
+    val initial: String
+)
+
 @Composable
 fun ColorOptionsSection(
     mainColor: String,
     selectedIndex: Int,
     onColorSelected: (Int) -> Unit
 ) {
-    // Convertir la couleur principale de l'API
-    val mainColorObject = parseColor(mainColor)
-
-    // Générer quelques couleurs supplémentaires basées sur la catégorie
-    val colorOptions = listOf(
-        mainColorObject,                 // Couleur principale de l'API
-        Color(0xFF1E3A8A),               // Bleu foncé
-        Color.Black,                     // Noir
-        Color(0xFF6E6E6E)                // Gris
-    )
+    // Créer des options de couleur avec la couleur principale de l'API et d'autres variantes
+    val colorOptions = createColorOptions(mainColor)
 
     Row(modifier = Modifier.padding(start = 16.dp)) {
-        colorOptions.forEachIndexed { index, color ->
+        colorOptions.forEachIndexed { index, colorOption ->
+            // Box externe pour gérer la bordure de sélection
             Box(
+                contentAlignment = Alignment.Center,
                 modifier = Modifier
-                    .size(32.dp)
-                    .padding(4.dp)
-                    .clip(CircleShape)
-                    .background(color)
+                    .size(40.dp)
+                    .padding(2.dp)
                     .then(
                         if (index == selectedIndex) {
-                            Modifier
-                                .border(
-                                    width = 2.dp,
-                                    color = Color(0xFF1E3A8A),
-                                    shape = CircleShape
-                                )
-                                .shadow(4.dp, CircleShape)
+                            Modifier.border(
+                                width = 2.dp,
+                                color = Color(0xFF1E3A8A),
+                                shape = CircleShape
+                            )
                         } else {
-                            Modifier.clickable { onColorSelected(index) }
+                            Modifier
                         }
                     )
-            )
-            Spacer(modifier = Modifier.width(8.dp))
+            ) {
+                // Box interne pour la couleur (toujours présente)
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier
+                        .size(36.dp)
+                        .clip(CircleShape)
+                        .background(colorOption.color)
+                        .border(
+                            width = 1.dp,
+                            color = Color.LightGray,
+                            shape = CircleShape
+                        )
+                        .clickable { onColorSelected(index) }
+                ) {
+                    // Afficher l'initiale de la couleur pour une meilleure accessibilité
+                    // Utiliser une couleur de texte contrastante
+                    val textColor = if (isColorDark(colorOption.color)) Color.White else Color.Black
+                    Text(
+                        text = colorOption.initial,
+                        color = textColor,
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Bold,
+                        textAlign = TextAlign.Center
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.width(12.dp))
         }
     }
 }
 
-// Fonction pour convertir un nom de couleur en objet Color
-fun parseColor(colorName: String): Color {
+// Fonction pour créer les options de couleur à partir de la couleur principale
+fun createColorOptions(mainColorName: String): List<ColorOption> {
+    val mainColorInfo = getColorInfo(mainColorName)
+    val additionalColors = listOf(
+        ColorOption(Color(0xFF1E3A8A), "Bleu", "B"),
+        ColorOption(Color.Black, "Noir", "N"),
+        ColorOption(Color(0xFF6E6E6E), "Gris", "G")
+    )
+
+    // Rendre unique en évitant la duplication de la couleur principale
+    val uniqueColors = mutableListOf(mainColorInfo)
+    additionalColors.forEach { colorOption ->
+        if (colorOption.color != mainColorInfo.color) {
+            uniqueColors.add(colorOption)
+        }
+    }
+
+    return uniqueColors.take(4) // Limiter à 4 options maximum
+}
+
+// Fonction pour déterminer si une couleur est sombre
+fun isColorDark(color: Color): Boolean {
+    val luminance = (0.299 * color.red + 0.587 * color.green + 0.114 * color.blue)
+    return luminance < 0.5
+}
+
+// Fonction pour obtenir l'info d'une couleur à partir de son nom
+fun getColorInfo(colorName: String): ColorOption {
     return when (colorName.lowercase()) {
-        "black", "noir" -> Color.Black
-        "white", "blanc" -> Color.White
-        "red", "rouge" -> Color.Red
-        "blue", "bleu" -> Color(0xFF1E3A8A)
-        "green", "vert" -> Color.Green
-        "yellow", "jaune" -> Color.Yellow
-        "gray", "grey", "gris" -> Color.Gray
-        "purple", "violet" -> Color(0xFF800080)
-        "pink", "rose" -> Color(0xFFFF69B4)
-        "orange" -> Color(0xFFFF8C00)
-        "brown", "marron" -> Color(0xFF8B4513)
-        "silver", "argent" -> Color(0xFFC0C0C0)
-        "gold", "or" -> Color(0xFFFFD700)
-        else -> Color(0xFF1E3A8A) // Couleur par défaut si la couleur n'est pas reconnue
+        "black", "noir" -> ColorOption(Color.Black, "Noir", "N")
+        "white", "blanc" -> ColorOption(Color.White, "Blanc", "W")
+        "red", "rouge" -> ColorOption(Color.Red, "Rouge", "R")
+        "blue", "bleu" -> ColorOption(Color(0xFF1E3A8A), "Bleu", "B")
+        "green", "vert" -> ColorOption(Color.Green, "Vert", "V")
+        "yellow", "jaune" -> ColorOption(Color.Yellow, "Jaune", "J")
+        "gray", "grey", "gris" -> ColorOption(Color.Gray, "Gris", "G")
+        "purple", "violet" -> ColorOption(Color(0xFF800080), "Violet", "V")
+        "pink", "rose" -> ColorOption(Color(0xFFFF69B4), "Rose", "R")
+        "orange" -> ColorOption(Color(0xFFFF8C00), "Orange", "O")
+        "brown", "marron" -> ColorOption(Color(0xFF8B4513), "Marron", "M")
+        "silver", "argent" -> ColorOption(Color(0xFFC0C0C0), "Argent", "A")
+        "gold", "or" -> ColorOption(Color(0xFFFFD700), "Or", "O")
+        else -> ColorOption(Color(0xFF1E3A8A), "Bleu", "B") // Couleur par défaut
     }
 }
 
