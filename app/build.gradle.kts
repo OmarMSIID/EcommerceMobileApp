@@ -87,6 +87,7 @@ dependencies {
     implementation ("androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version")
     // Lifecycle utilities for Compose
     implementation ("androidx.lifecycle:lifecycle-runtime-compose:$lifecycle_version")
+    implementation("io.coil-kt:coil-compose:2.5.0")
     implementation("androidx.compose.runtime:runtime-livedata:1.7.8")
 
     //coroutine :
