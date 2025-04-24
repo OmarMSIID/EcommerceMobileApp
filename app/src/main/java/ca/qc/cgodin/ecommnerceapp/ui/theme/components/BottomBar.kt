@@ -9,25 +9,27 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import ca.qc.cgodin.ecommnerceapp.R
+import ca.qc.cgodin.ecommnerceapp.navigation.Screen
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 
 @Composable
-fun BottomBar() {
+fun BottomBar(navController: NavHostController) {
     NavigationBar(
         containerColor = Color(0xB0D9D9D9),
         tonalElevation = 4.dp,
-        modifier = Modifier.height(80.dp), // Réduire la hauteur de la barre
+        modifier = Modifier.height(80.dp)
     ) {
         NavigationBarItem(
             selected = false,
-            onClick = { /* panier */ },
+            onClick = { navController.navigate(Screen.Cart.route) },
             icon = { Icon(painterResource(R.drawable.ic_cart), contentDescription = "Panier") }
         )
         NavigationBarItem(
             selected = true,
-            onClick = { /* accueil */ },
+            onClick = { navController.navigate(Screen.Home.route) }, // remplace "/* accueil */"
             icon = { Icon(painterResource(R.drawable.ic_home), contentDescription = "Accueil") }
         )
         NavigationBarItem(

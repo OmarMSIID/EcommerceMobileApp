@@ -1,5 +1,6 @@
 package ca.qc.cgodin.ecommnerceapp.ui.theme
 
+import android.widget.Toast
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -32,10 +33,14 @@ import ca.qc.cgodin.ecommnerceapp.data.remote.ProductViewModel
 fun ProductDescriptionScreen(
     navController: NavHostController,
     productId: Int,
-    viewModel: ProductViewModel = viewModel()
+    viewModel: ProductViewModel = viewModel(),
+    // Add CartViewModel as a parameter
+    cartViewModel: CartViewModel = viewModel()
 ) {
     val selectedProduct by viewModel.selectedProduct.collectAsState()
     var selectedColorIndex by remember { mutableStateOf(0) }
+    // Get context outside of the onClick lambda
+    val context = LocalContext.current
 
     LaunchedEffect(productId) {
         viewModel.selectProductById(productId)
@@ -157,12 +162,27 @@ fun ProductDescriptionScreen(
                     }
 
                     Button(
-                        onClick = { /* TODO: Ajouter au panier */ },
+                        onClick = {
+                            // Utilisez directement le cartViewModel passé en paramètre
+                            product.let {
+                                cartViewModel.addToCart(it)
+
+                                // Utilisez le contexte obtenu plus tôt
+                                Toast.makeText(
+                                    context,
+                                    "${it.title} ajouté au panier",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+
+                            // Optionally navigate to cart screen
+                            // navController.navigate(Screen.Cart.route)
+                        },
                         modifier = Modifier
                             .height(48.dp)
                             .width(200.dp),
                         shape = RoundedCornerShape(24.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1E3A8A))
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1E5FAA))
                     ) {
                         Text(text = "Ajouter au panier", color = Color.White)
                     }

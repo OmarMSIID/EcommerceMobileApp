@@ -16,7 +16,7 @@ import ca.qc.cgodin.ecommnerceapp.ui.theme.components.*
 @Composable
 fun HomeScreen(navController: NavHostController) {
     Scaffold(
-        bottomBar = { BottomBar() }
+        bottomBar = { BottomBar(navController) }
     ) { paddingValues ->
         // Utilisation d'un seul padding global pour tout l'écran
         Column(

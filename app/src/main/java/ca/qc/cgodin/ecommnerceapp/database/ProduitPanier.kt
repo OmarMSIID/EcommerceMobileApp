@@ -4,7 +4,6 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-
 @Entity(tableName = "produit_basket")
 data class ProduitPanier(
     @PrimaryKey(autoGenerate = true)
@@ -16,5 +15,7 @@ data class ProduitPanier(
     @ColumnInfo(name = "prix")
     val prix : Float,
     @ColumnInfo(name = "quantity")
-    val quantity : Int
+    val quantity : Int,
+    @ColumnInfo(name = "image")
+    val image : String // Nouveau champ pour stocker l'URL de l'image
 )

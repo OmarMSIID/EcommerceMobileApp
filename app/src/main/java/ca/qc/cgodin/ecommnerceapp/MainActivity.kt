@@ -115,6 +115,9 @@ fun AppNavigator() {
                 Log.e("ProductDescription", "Invalid product ID")
             }
         }
+        composable(Screen.Cart.route) {
+            CartScreen(navController)
+        }
     }
 }
 
