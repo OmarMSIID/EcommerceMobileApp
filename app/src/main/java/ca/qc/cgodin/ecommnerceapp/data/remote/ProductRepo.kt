@@ -4,7 +4,6 @@ import kotlinx.coroutines.withContext
 import ca.qc.cgodin.ecommnerceapp.database.ProduitPanier
 import ca.qc.cgodin.ecommnerceapp.database.ProduitPanierDao
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 
 class ProductRepo {
     private val apiService = RetrofitClient.apiService
@@ -22,32 +21,52 @@ class ProductRepo {
 
     suspend fun addProductToCart(panierDao: ProduitPanierDao, product: Product, quantity: Int = 1) {
         withContext(Dispatchers.IO) {
-            val produitPanier = ProduitPanier(
-                nom = product.title,
-                description = product.description,
-                prix = product.price.toFloat(),
-                quantity = quantity,
-                image = product.image // Ajout de l'URL de l'image
-            )
-            panierDao.addProduit(produitPanier)
+            try {
+                val produitPanier = ProduitPanier(
+                    nom = product.title,
+                    description = product.description,
+                    prix = product.price.toFloat(),
+                    quantity = quantity,
+                    image = product.image
+                )
+                panierDao.addProduit(produitPanier)
+            } catch (e: Exception) {
+                e.printStackTrace()
+                throw e
+            }
         }
     }
 
     suspend fun removeProductFromCart(panierDao: ProduitPanierDao, productId: Int) {
         withContext(Dispatchers.IO) {
-            panierDao.deleteProduit(productId)
+            try {
+                panierDao.deleteProduit(productId)
+            } catch (e: Exception) {
+                e.printStackTrace()
+                throw e
+            }
         }
     }
 
     suspend fun updateProductQuantity(panierDao: ProduitPanierDao, productId: Int, quantity: Int) {
         withContext(Dispatchers.IO) {
-            panierDao.updateProduitQuantity(productId, quantity)
+            try {
+                panierDao.updateProduitQuantity(productId, quantity)
+            } catch (e: Exception) {
+                e.printStackTrace()
+                throw e
+            }
         }
     }
 
     suspend fun getAllCartProducts(panierDao: ProduitPanierDao): List<ProduitPanier> {
         return withContext(Dispatchers.IO) {
-            panierDao.getAllProduit()
+            try {
+                panierDao.getAllProduit()
+            } catch (e: Exception) {
+                e.printStackTrace()
+                emptyList()
+            }
         }
     }
 }

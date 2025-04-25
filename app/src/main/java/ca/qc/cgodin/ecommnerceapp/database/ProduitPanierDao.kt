@@ -1,6 +1,5 @@
 package ca.qc.cgodin.ecommnerceapp.database
 
-import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
@@ -10,17 +9,15 @@ import androidx.room.Update
 
 @Dao
 interface ProduitPanierDao {
-
-    @Query("SELECT * FROM produit_basket ;")
+    @Query("SELECT * FROM produit_basket")
     suspend fun getAllProduit(): List<ProduitPanier>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun addProduit(produitPanier: ProduitPanier)
-    @Query("UPDATE produit_basket set quantity= :quantity WHERE id = :id ")
-    fun updateProduitQuantity(id: Int,quantity: Int)
-    @Query("DELETE FROM produit_basket WHERE id= :id ;")
-    fun deleteProduit(id: Int)
+    suspend fun addProduit(produitPanier: ProduitPanier)
 
-    @Query("SELECT * FROM produit_basket WHERE id=:id")
-    fun getProduit(id:Int): ProduitPanier
+    @Query("UPDATE produit_basket SET quantity = :newQuantity WHERE id = :productId")
+    suspend fun updateProduitQuantity(productId: Int, newQuantity: Int)
+
+    @Query("DELETE FROM produit_basket WHERE id = :productId")
+    suspend fun deleteProduit(productId: Int)
 }

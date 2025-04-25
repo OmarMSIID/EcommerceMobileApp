@@ -26,7 +26,8 @@ class CartViewModel(application: Application) : AndroidViewModel(application) {
         ProduitPanierModel::class.java,
         "produit_panier_database"
     ).addMigrations(MIGRATION_1_2) // Ajout de la migration
-        .build()
+        .fallbackToDestructiveMigration()
+    .build()
 
     private val produitDao = database.produitDao
 
