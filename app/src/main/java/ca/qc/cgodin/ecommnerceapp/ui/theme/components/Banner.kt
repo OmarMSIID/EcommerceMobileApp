@@ -1,29 +1,43 @@
 package ca.qc.cgodin.ecommnerceapp.ui.theme.components
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandHorizontally
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkHorizontally
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ca.qc.cgodin.ecommnerceapp.R
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
-fun Banner() {
+fun Banner(onSearchQueryChanged: (String) -> Unit = {}) {
     val banners = listOf(
         BannerData(
             R.drawable.banner_image,
@@ -43,8 +57,13 @@ fun Banner() {
     )
 
     var currentIndex by remember { mutableStateOf(0) }
+    var isSearchVisible by remember { mutableStateOf(false) }
+    var searchQuery by remember { mutableStateOf("") }
+    val focusRequester = remember { FocusRequester() }
+    val focusManager = LocalFocusManager.current
+    val coroutineScope = rememberCoroutineScope()
 
-    // Carrousel automatique
+    // Auto carousel
     LaunchedEffect(Unit) {
         while (true) {
             delay(3000)
@@ -52,22 +71,86 @@ fun Banner() {
         }
     }
 
+    // Request focus when search becomes visible
+    LaunchedEffect(isSearchVisible) {
+        if (isSearchVisible) {
+            // Small delay to ensure animation starts before requesting focus
+            delay(100)
+            focusRequester.requestFocus()
+        }
+    }
+
     val banner = banners[currentIndex]
 
-    // Icons Search + Notifications
+    // Search row
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(bottom = 16.dp),
+            .padding(bottom = 16.dp, start = 16.dp, end = 16.dp),
         horizontalArrangement = Arrangement.End,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        IconButtonBox(icon = Icons.Filled.Search, description = "Icône de recherche")
-        Spacer(modifier = Modifier.width(7.dp))
-        IconButtonBox(icon = Icons.Filled.Notifications, description = "Icône de notifications")
+        AnimatedVisibility(
+            visible = isSearchVisible,
+            enter = fadeIn(animationSpec = tween(300)) +
+                    expandHorizontally(animationSpec = tween(300), expandFrom = Alignment.End),
+            exit = fadeOut(animationSpec = tween(300)) +
+                    shrinkHorizontally(animationSpec = tween(300), shrinkTowards = Alignment.End)
+        ) {
+            OutlinedTextField(
+                value = searchQuery,
+                onValueChange = {
+                    searchQuery = it
+                    onSearchQueryChanged(it)
+                },
+                modifier = Modifier
+                    .weight(1f)
+                    .focusRequester(focusRequester),
+                placeholder = { Text("Search products...") },
+                singleLine = true,
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = Color(0xFF1E5FAA),
+                    unfocusedBorderColor = Color.LightGray
+                ),
+                trailingIcon = {
+                    if (searchQuery.isNotEmpty()) {
+                        IconButton(onClick = {
+                            searchQuery = ""
+                            onSearchQueryChanged("")
+                        }) {
+                            Icon(
+                                imageVector = Icons.Default.Clear,
+                                contentDescription = "Clear search"
+                            )
+                        }
+                    }
+                },
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+                keyboardActions = KeyboardActions(
+                    onSearch = {
+                        focusManager.clearFocus()
+                    }
+                ),
+                shape = RoundedCornerShape(24.dp)
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+        }
+
+        IconButtonBox(
+            icon = Icons.Filled.Search,
+            description = "Icône de recherche",
+            onClick = {
+                isSearchVisible = !isSearchVisible
+                if (!isSearchVisible) {
+                    searchQuery = ""
+                    onSearchQueryChanged("")
+                    focusManager.clearFocus()
+                }
+            }
+        )
     }
 
-    // Carte de la bannière
+    // Banner Card
     Card(
         shape = RoundedCornerShape(20.dp),
         modifier = Modifier
@@ -76,7 +159,7 @@ fun Banner() {
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
-            // Image de fond
+            // Background image
             Image(
                 painter = painterResource(id = banner.imageRes),
                 contentDescription = null,
@@ -84,7 +167,7 @@ fun Banner() {
                 contentScale = ContentScale.Crop
             )
 
-            // Contenu textuel à gauche
+            // Text content on the left
             Row(
                 modifier = Modifier
                     .fillMaxSize()
@@ -125,13 +208,19 @@ fun Banner() {
     }
 }
 
-// Petit composant pour les boutons icônes (Search + Notifications)
+// Small component for icon buttons (Search + Notifications)
 @Composable
-fun IconButtonBox(icon: androidx.compose.ui.graphics.vector.ImageVector, description: String) {
+fun IconButtonBox(
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    description: String,
+    onClick: () -> Unit = {}
+) {
     Box(
         modifier = Modifier
             .size(49.dp)
             .background(Color(0xFFD9D9D9), shape = CircleShape)
+            .clip(CircleShape)
+            .clickable(onClick = onClick)
             .padding(8.dp),
         contentAlignment = Alignment.Center
     ) {
@@ -144,7 +233,7 @@ fun IconButtonBox(icon: androidx.compose.ui.graphics.vector.ImageVector, descrip
     }
 }
 
-// Données de chaque slide de la bannière
+// Data for each banner slide
 data class BannerData(
     val imageRes: Int,
     val title: String,

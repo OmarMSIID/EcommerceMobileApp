@@ -4,6 +4,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.*
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -12,9 +14,17 @@ import androidx.compose.ui.unit.sp
 import ca.qc.cgodin.ecommnerceapp.ui.theme.components.BrandRow
 import androidx.navigation.NavHostController
 import ca.qc.cgodin.ecommnerceapp.ui.theme.components.*
+import androidx.lifecycle.viewmodel.compose.viewModel
+import ca.qc.cgodin.ecommnerceapp.data.remote.ProductViewModel
 
 @Composable
-fun HomeScreen(navController: NavHostController) {
+fun HomeScreen(
+    navController: NavHostController,
+    viewModel: ProductViewModel = viewModel()
+) {
+    // Get the search query from view model
+    val searchQuery by viewModel.searchQuery.collectAsState()
+
     Scaffold(
         bottomBar = { BottomBar(navController) }
     ) { paddingValues ->
@@ -26,8 +36,12 @@ fun HomeScreen(navController: NavHostController) {
                 .background(Color.White) // Fond blanc
                 .padding(horizontal = 16.dp) // Padding horizontal pour tout le contenu
         ) {
-            // Banner
-            Banner()
+            // Banner with search function that updates the view model
+            Banner(
+                onSearchQueryChanged = { query ->
+                    viewModel.setSearchQuery(query)
+                }
+            )
 
             // Espacement entre la bannière et les marques
             Spacer(modifier = Modifier.height(16.dp))
@@ -56,8 +70,8 @@ fun HomeScreen(navController: NavHostController) {
                 modifier = Modifier.padding(bottom = 8.dp) // Espacement sous le titre
             )
 
-            // Affichage des produits - Passage du NavController
-            ProductGrid(navController)
+            // Pass the same viewModel to ProductGrid to ensure consistent state
+            ProductGrid(navController, viewModel)
         }
     }
 }
